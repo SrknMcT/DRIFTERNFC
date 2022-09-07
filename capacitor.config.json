@@ -1,0 +1,11 @@
+{
+  "appId": "com.drifter",
+  "appName": "nfcreader",
+  "bundledWebRuntime": false,
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}
