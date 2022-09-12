@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
 import com.github.devnied.emvnfccard.model.EmvCard
 import com.github.devnied.emvnfccard.parser.EmvTemplate
-import com.drifter.databinding.ActivityMainBinding
+import com.drifter.databinding.ActivityMainNfcactivityBinding
 import net.sf.scuba.util.Hex.toHexString
 
 
@@ -26,7 +26,7 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
 
     lateinit var activity: Activity
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMainNfcactivityBinding
     lateinit var mNfcAdapter: NfcAdapter
     var tag: WritableTag? = null
     var tagId: String? = null
@@ -37,7 +37,7 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainNfcactivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         activity = this
