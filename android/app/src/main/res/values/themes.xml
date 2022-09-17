@@ -17,6 +17,8 @@
     <style name="Theme.NFCtest.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:navigationBarColor">#353355</item>
+        <item name="android:statusBarColor">#353355</item>
     </style>
 
     <style name="Theme.NFCtest.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
