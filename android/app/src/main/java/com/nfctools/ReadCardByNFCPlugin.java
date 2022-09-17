@@ -1,4 +1,4 @@
-package com.drifter;
+package com.nfctools;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,6 +1,4 @@
-package com.drifter;
-
-import android.util.Log;
+package com.nfctools;
 
 public class ReadCardByNFC {
     private NfcResultCallback nfcResultCallbackImpl;

@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">nfcreader</string>
     <string name="title_activity_load">nfcreader</string>
-    <string name="package_name">com.drifter</string>
-    <string name="custom_url_scheme">com.drifter</string>
+    <string name="package_name">com.nfctools</string>
+    <string name="custom_url_scheme">com.nfctools</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

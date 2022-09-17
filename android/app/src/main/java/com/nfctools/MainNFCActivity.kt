@@ -1,4 +1,4 @@
-package com.drifter
+package com.nfctools
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -18,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
 import com.github.devnied.emvnfccard.model.EmvCard
 import com.github.devnied.emvnfccard.parser.EmvTemplate
-import com.drifter.databinding.ActivityMainNfcactivityBinding
+import com.nfctools.databinding.ActivityMainNfcactivityBinding
 import net.sf.scuba.util.Hex.toHexString
 
 
@@ -31,7 +31,7 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
     var tag: WritableTag? = null
     var tagId: String? = null
 
-    lateinit var nfcManager: com.drifter.NfcManager
+    lateinit var nfcManager: com.nfctools.NfcManager
 
     @SuppressLint("ServiceCast")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,10 +42,27 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
 
         activity = this
         //setSupportActionBar(binding.toolbar)
+
         nfcManager = NfcManager(this, this)
 
         val nfcManager = getSystemService(Context.NFC_SERVICE) as android.nfc.NfcManager
+
         mNfcAdapter = nfcManager.defaultAdapter
+
+        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+
+            //Yes NFC available
+        } else if (mNfcAdapter != null && !mNfcAdapter.isEnabled()) {
+
+            //NFC is not enabled.Need to enable by the user.
+            ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                .onStatusChanged("NFCNotEnabled")
+        } else {
+            //NFC is not supported
+            ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                .onStatusChanged("NFCNotSupported")
+        }
+
     }
 
     private fun showToast(message: String) {
@@ -55,10 +72,22 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun enableNfcForegroundDispatch() {
         try {
-            val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-            val nfcPendingIntent =
-                PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            mNfcAdapter.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+            if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+                val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                val nfcPendingIntent =
+                    PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                mNfcAdapter.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+            } else if (mNfcAdapter != null && !mNfcAdapter.isEnabled()) {
+
+                //NFC is not enabled.Need to enable by the user.
+                ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                    .onStatusChanged("NFCNotEnabled")
+            } else {
+                //NFC is not supported
+                ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                    .onStatusChanged("NFCNotSupported")
+            }
+
         } catch (ex: IllegalStateException) {
             Log.e("getTag", "Error enabling NFC foreground dispatch", ex)
         }
@@ -66,7 +95,19 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
 
     private fun disableNfcForegroundDispatch() {
         try {
-            mNfcAdapter?.disableForegroundDispatch(this)
+
+            if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+                mNfcAdapter?.disableForegroundDispatch(this)
+            } else if (mNfcAdapter != null && !mNfcAdapter.isEnabled()) {
+
+                //NFC is not enabled.Need to enable by the user.
+                ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                    .onStatusChanged("NFCNotEnabled")
+            } else {
+                //NFC is not supported
+                ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                    .onStatusChanged("NFCNotSupported")
+            }
         } catch (ex: IllegalStateException) {
             Log.e("mNfcAdapter", "Error disabling NFC foreground dispatch", ex)
         }
@@ -122,7 +163,7 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
             val cardNumber = card.track2.cardNumber
 
             val cardExpireDate = toHexString(card.track2.raw).split("D")[1]
-            var expiry= cardExpireDate.substring(2,4)+"/"+cardExpireDate.substring(0,2)
+            var expiry = cardExpireDate.substring(2, 4) + "/" + cardExpireDate.substring(0, 2)
 
             val pinStatus = card.track2.service.serviceCode3.pinRequirements
 
@@ -149,6 +190,9 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
             activity.runOnUiThread {
                 binding.tvCardDetails.text = appendData
             }
+            if (appendData.length>0 )
+                appendData=""
+                finish()
         }
     }
 }

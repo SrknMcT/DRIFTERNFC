@@ -1,4 +1,4 @@
-package com.drifter;
+package com.nfctools;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.drifter.databinding.FragmentFirst2Binding;
+import com.nfctools.databinding.FragmentFirst2Binding;
 
 public class First2Fragment extends Fragment {
 

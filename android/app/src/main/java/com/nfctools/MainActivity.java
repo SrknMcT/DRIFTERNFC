@@ -1,4 +1,4 @@
-package com.drifter;
+package com.nfctools;
 
 import android.os.Bundle;
 

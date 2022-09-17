@@ -17,25 +17,22 @@
  * with smartcard-reader. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.drifter;
+package com.nfctools;
 
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.LayoutInflater;
 
 
 public class NfcManager {
 
-    private static final String TAG = "MainActivity.TAG";
+    private static final String TAG = "MainNFCActivity.TAG";
 
     // reader mode flags: listen for type A (not B), skipping ndef check
     private static final int READER_FLAGS =

@@ -1,4 +1,4 @@
-package com.drifter
+package com.nfctools
 class ByteUtils {
     companion object {
         fun isNullOrEmpty(array: ByteArray?): Boolean {

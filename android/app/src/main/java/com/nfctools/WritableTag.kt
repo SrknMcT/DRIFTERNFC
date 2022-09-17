@@ -1,4 +1,4 @@
-package com.drifter
+package com.nfctools
 
 import android.nfc.FormatException
 import android.nfc.NdefMessage
