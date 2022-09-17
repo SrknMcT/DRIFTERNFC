@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.nfc.NfcAdapter.ReaderCallback
 import android.nfc.Tag
@@ -20,6 +21,7 @@ import com.github.devnied.emvnfccard.model.EmvCard
 import com.github.devnied.emvnfccard.parser.EmvTemplate
 import com.nfctools.databinding.ActivityMainNfcactivityBinding
 import net.sf.scuba.util.Hex.toHexString
+import java.security.AccessController.getContext
 
 
 class MainNFCActivity : AppCompatActivity(), ReaderCallback {
@@ -32,6 +34,7 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
     var tagId: String? = null
 
     lateinit var nfcManager: com.nfctools.NfcManager
+    lateinit var pm: PackageManager
 
     @SuppressLint("ServiceCast")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,25 +46,33 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
         activity = this
         //setSupportActionBar(binding.toolbar)
 
+        pm=packageManager
+
         nfcManager = NfcManager(this, this)
 
         val nfcManager = getSystemService(Context.NFC_SERVICE) as android.nfc.NfcManager
 
-        mNfcAdapter = nfcManager.defaultAdapter
 
-        if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+        if (pm.hasSystemFeature(PackageManager.FEATURE_NFC)) {
 
-            //Yes NFC available
-        } else if (mNfcAdapter != null && !mNfcAdapter.isEnabled()) {
+            mNfcAdapter = nfcManager.defaultAdapter
 
-            //NFC is not enabled.Need to enable by the user.
-            ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
-                .onStatusChanged("NFCNotEnabled")
-        } else {
-            //NFC is not supported
-            ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
-                .onStatusChanged("NFCNotSupported")
+            if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
+
+                //Yes NFC available
+            } else if (mNfcAdapter != null && !mNfcAdapter.isEnabled()) {
+
+                //NFC is not enabled.Need to enable by the user.
+                ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                    .onStatusChanged("NFCNotEnabled")
+            } else {
+                //NFC is not supported
+                ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                    .onStatusChanged("NFCNotSupported")
+            }
+
         }
+
 
     }
 
@@ -71,6 +82,15 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun enableNfcForegroundDispatch() {
+
+        if (!pm.hasSystemFeature(PackageManager.FEATURE_NFC))
+        {
+            ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                .onStatusChanged("NFCNotSupported")
+            return
+        }
+
+
         try {
             if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
                 val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -94,6 +114,14 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
     }
 
     private fun disableNfcForegroundDispatch() {
+
+        if (!pm.hasSystemFeature(PackageManager.FEATURE_NFC))
+        {
+            ReadCardByNFC.getInstance().getNfcResultCallbackImpl()
+                .onStatusChanged("NFCNotSupported")
+            return
+        }
+
         try {
 
             if (mNfcAdapter != null && mNfcAdapter.isEnabled()) {
@@ -190,9 +218,11 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
             activity.runOnUiThread {
                 binding.tvCardDetails.text = appendData
             }
-            if (appendData.length>0 )
-                appendData=""
+            if (appendData.isNotEmpty()) {
+                appendData = ""
                 finish()
+            }
+
         }
     }
 }
