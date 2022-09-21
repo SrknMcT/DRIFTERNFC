@@ -188,32 +188,48 @@ class MainNFCActivity : AppCompatActivity(), ReaderCallback {
 
             val cardType = card.type.toString()
 
-            val cardNumber = card.track2.cardNumber
+            val cardNumber = card.cardNumber
 
             val cardExpireDate = toHexString(card.track2.raw).split("D")[1]
+
             var expiry = cardExpireDate.substring(2, 4) + "/" + cardExpireDate.substring(0, 2)
 
-            val pinStatus = card.track2.service.serviceCode3.pinRequirements
+            var pinStatus = ""
+            var serviceStatus = ""
 
-            val serviceStatus = card.track2.service.serviceCode3.allowedServices
+            if(card.track2!=null)
+            {
+                pinStatus = card.track2.service.serviceCode3.pinRequirements
+                serviceStatus = card.track2.service.serviceCode3.allowedServices
+
+            }
+            else
+            {
+                pinStatus="NULL"
+                serviceStatus="NULL"
+            }
+
+            val nfcState = card.state.name
 
             //val cardHolderName= card.holderFirstname + card.holderLastname
 
             val cardAID = card.type.aid[0]
 
-            Log.e("card track2 number", card.track2.cardNumber)
-            Log.e("card expiry", card.track2.expireDate.time.toString())
+            Log.e("card track2 number", cardNumber)
+            Log.e("card expiry", expiry)
             Log.e("card raw", toHexString(card.track2.raw))
-            Log.e("card service code 1", card.track2.service.serviceCode1.technology)
-            Log.e(
-                "card service code 2", card.track2.service.serviceCode2.authorizationProcessing +
-                        card.track2.service.serviceCode2.name
-            )
-            Log.e("card service 3", card.track2.service.serviceCode3.pinRequirements)
-            Log.e("card service 3", card.track2.service.serviceCode3.allowedServices)
+            //Log.e("card service code 1", card.track2.service.serviceCode1.technology)
+/*            Log.e(
+               "card service code 2", card.track2.service.serviceCode2.authorizationProcessing +
+                         card.track2.service.serviceCode2.name
+            )*/
+            Log.e("card service 3", pinStatus)
+            Log.e("card service 3",serviceStatus)
+            Log.e("cardnfc State",nfcState)
 
             var appendData =
-                "Card Type: $cardType\nCard Number: $cardNumber \nExpire Date: $expiry\nPIN Status: $pinStatus\nService Status: $serviceStatus\nAID: $cardAID"
+                "Card Type: $cardType\nCard Number: $cardNumber \nExpire Date: $expiry\nPIN Status: $pinStatus\nService Status: $serviceStatus\nAID: $cardAID\n" +
+                        "CardNfc State: $nfcState"
             ReadCardByNFC.getInstance().getNfcResultCallbackImpl().onStatusChanged(appendData)
             activity.runOnUiThread {
                 binding.tvCardDetails.text = appendData
