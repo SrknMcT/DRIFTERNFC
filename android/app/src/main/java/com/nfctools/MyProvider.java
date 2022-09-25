@@ -19,6 +19,7 @@ public class MyProvider implements IProvider {
             // send command to emv card
             response = mTagCom.transceive(pCommand);
         } catch (IOException e) {
+            ReadCardByNFC.getInstance().getNfcResultCallbackImpl().onStatusChanged(e.getMessage());
             throw new CommunicationException(e.getMessage());
         }
 
